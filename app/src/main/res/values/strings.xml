@@ -4,4 +4,10 @@
     <string name="new_device">New Device</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="contact_us">Contact Us</string>
+    <string name="mobile">Mobile</string>
+    <string name="email">Email</string>
+    <string name="message">Message</string>
+    <string name="clientname">Name</string>
+    <string name="about_us">AboutUs</string>
 </resources>

@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
@@ -92,6 +93,9 @@ public class CamaraActivity extends AppCompatActivity {
             startCamera(); //start camera if permission has been granted by user
         } else {
             ActivityCompat.requestPermissions(this,REQUIRED_PERMISSIONS,REQUEST_CODE_PERMISSIONS);
+            Intent intent=new Intent(Intent.ACTION_SEND);
+            intent.setAction(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
+            startActivity(intent);
         }
 
         binding.llZoomInOut.setOnClickListener(v -> {
@@ -189,101 +193,6 @@ public class CamaraActivity extends AppCompatActivity {
         binding.ivFlash.setTag(icon);
     }
 
-   /* @SuppressLint("RestrictedApi")
-    private void startCamera ( ) {
-
-        CameraX.unbindAll();
-
-        Rational aspectRatio = new Rational(binding.viewFinder.getWidth(),binding.viewFinder.getHeight());
-        Size screen = new Size(binding.viewFinder.getWidth(),binding.viewFinder.getHeight()); //size of the screen
-
-
-        PreviewConfig pConfig = new PreviewConfig.Builder().setTargetAspectRatio(aspectRatio).setTargetResolution(screen).build();
-        Preview preview = new Preview(pConfig);
-
-
-        preview.setOnPreviewOutputUpdateListener(
-                new Preview.OnPreviewOutputUpdateListener() {
-                    //to update the surface texture we  have to destroy it first then re-add it
-                    @Override
-                    public void onUpdated (Preview.PreviewOutput output) {
-                        ViewGroup parent = (ViewGroup) binding.viewFinder.getParent();
-                        parent.removeView(binding.viewFinder);
-                        parent.addView(binding.viewFinder,0);
-
-                        binding.viewFinder.setSurfaceTexture(output.getSurfaceTexture());
-                        updateTransform();
-                    }
-                });
-
-
-        ImageCaptureConfig imageCaptureConfig = new ImageCaptureConfig.Builder().setCaptureMode(ImageCapture.CaptureMode.MIN_LATENCY)
-                .setTargetRotation(getWindowManager().getDefaultDisplay().getRotation()).setFlashMode(FlashMode.OFF).build();
-        imgCap = new ImageCapture(imageCaptureConfig);
-
-//        binding.imgCapture.setBackground(getDrawable(R.drawable.camera));
-        binding.llCapture.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick (View v) {
-//                binding.imgCapture.setBackground(getDrawable(R.drawable.camera_cap));
-                File mypath = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS) + "/NewTec/Image/");
-                if (!mypath.exists())
-                    mypath.mkdirs();
-                File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS) + "/NewTec/Image/" + System.currentTimeMillis() + ".jpg");
-                imgCap.takePicture(file,new ImageCapture.OnImageSavedListener() {
-                    @Override
-                    public void onImageSaved (@NonNull File file) {
-                        String msg = "Pic captured at " + file.getAbsolutePath();
-                        Toast.makeText(getBaseContext(),msg,Toast.LENGTH_LONG).show();
-
-                        if (Build.VERSION.SDK_INT >= 24) {
-                            imgUri = FileProvider.getUriForFile(CamaraActivity.this,"com.pt.cam.fileprovider"
-                                    ,file);
-                        } else {
-                            imgUri = Uri.fromFile(file);
-                        }
-                        if (imgUri != null) {
-
-                            */
-    /*Intent sendIntent = new Intent("android.intent.action.SEND");
-                            sendIntent.setComponent(new ComponentName("com.whatsapp","com.whatsapp.ContactPicker"));
-                            sendIntent.setType("image");
-                            sendIntent.putExtra(Intent.EXTRA_STREAM,imgUri);
-//                            sendIntent.putExtra("jid",PhoneNumberUtils.stripSeparators("91" + user.getMobile()) + "@s.whatsapp.net");
-                            startActivity(sendIntent);*//*ImageView imageView=new ImageView(CamaraActivity.this);
-                            imageView.setImageURI(imgUri);
-                            Bitmap bitmap=*/
-    /*
-                            try {
-                                Bitmap bmp = BitmapFactory.decodeStream(getContentResolver().openInputStream(imgUri));
-                                AppUtils.saveImage(bmp,CamaraActivity.this);
-                            } catch (FileNotFoundException e) {
-                                e.printStackTrace();
-                            }
-
-                        } else {
-                            Toast.makeText(CamaraActivity.this,"Please Capture Photo First",Toast.LENGTH_SHORT).show();
-                        }
-
-                    }
-
-                    @Override
-                    public void onError (@NonNull ImageCapture.UseCaseError useCaseError,@NonNull String message,@Nullable Throwable cause) {
-                        String msg = "Pic capture failed : " + message;
-                        Toast.makeText(getBaseContext(),msg,Toast.LENGTH_LONG).show();
-                        if (cause != null) {
-                            cause.printStackTrace();
-                        }
-                    }
-                });
-            }
-        });
-
-
-        //bind to lifecycle:
-        CameraX.bindToLifecycle((LifecycleOwner) this,preview,imgCap);
-    }*/
-
     private void startCamera ( ) {
 
         final ListenableFuture<ProcessCameraProvider> cameraProviderFuture = ProcessCameraProvider.getInstance(this);
@@ -349,7 +258,7 @@ public class CamaraActivity extends AppCompatActivity {
                         @Override
                         public void run ( ) {
 
-                            Toast.makeText(CamaraActivity.this,"Image Saved successfully" + outputFileResults.getSavedUri(),Toast.LENGTH_SHORT).show();
+                            Toast.makeText(CamaraActivity.this,"Image Saved successfully",Toast.LENGTH_SHORT).show();
                         }
                     });
 

@@ -20,6 +20,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Cam">
         <activity
+            android:name=".Activities.ContactUsScreen"
+            android:exported="true" />
+        <activity
+            android:name=".Activities.AboutUsScreen"
+            android:exported="true" />
+        <activity
             android:name=".Activities.CamScreen"
             android:exported="true" />
         <activity
