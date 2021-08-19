@@ -10,4 +10,7 @@
     <string name="message">Message</string>
     <string name="clientname">Name</string>
     <string name="about_us">AboutUs</string>
+    <string name="size_distribution">Size distribution</string>
+    <string name="malaria">Malaria</string>
+    <string name="obaervation">Obaervation</string>
 </resources>

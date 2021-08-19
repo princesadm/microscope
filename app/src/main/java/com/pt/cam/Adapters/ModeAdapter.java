@@ -36,10 +36,12 @@ public class ModeAdapter extends RecyclerView.Adapter<ModeAdapter.ViewHolder>{
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 
         if(arrayList_Modes.get(position).isSelected()){
-            holder.binding.rlMain.setBackground(context.getDrawable(R.drawable.selected_back));
+            holder.binding.rlMain.setBackground(context.getDrawable(R.drawable.selected_back_mode));
+            holder.binding.tvMode.setTextColor(context.getResources().getColor(R.color.black));
 //            holder.binding.tvMode.setTextSize(15);
         }else{
             holder.binding.rlMain.setBackground(new ColorDrawable(Color.TRANSPARENT));
+            holder.binding.tvMode.setTextColor(context.getResources().getColor(R.color.white));
 
         }
 

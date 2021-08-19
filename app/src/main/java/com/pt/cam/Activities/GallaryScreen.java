@@ -61,55 +61,59 @@ public class GallaryScreen extends AppCompatActivity {
     }
 
     public void changeData (int mode) {
-        File file = new File(AppConstraint.DOWNLOAD_FOLDER_PATH);
-        switch (mode) {
-            case 1:
-                if (file.listFiles().length > 0) {
-                    arrayList_ImgVids = new ArrayList<ImgVid>();
-                    for (int i = 0; i < file.listFiles().length; i++) {
-                        arrayList_ImgVids.add(new ImgVid(file.listFiles()[i],false));
+        try {
+            File file = new File(AppConstraint.IMG_FOLDER_PATH);
+            switch (mode) {
+                case 1:
+                    if (file.listFiles().length > 0) {
+                        arrayList_ImgVids = new ArrayList<ImgVid>();
+                        for (int i = 0; i < file.listFiles().length; i++) {
+                            arrayList_ImgVids.add(new ImgVid(file.listFiles()[i], false));
+                        }
+                        if (arrayList_ImgVids.size() > 0) {
+                            imgVidAdapter = new ImgVidAdapter(GallaryScreen.this, arrayList_ImgVids);
+                            binding.rvData.setLayoutManager(new GridLayoutManager(GallaryScreen.this, 3));
+                            binding.rvData.setAdapter(imgVidAdapter);
+                        } else {
+                            binding.tvNoData.setVisibility(View.VISIBLE);
+                        }
                     }
-                    if(arrayList_ImgVids.size() > 0) {
-                        imgVidAdapter = new ImgVidAdapter(GallaryScreen.this,arrayList_ImgVids);
-                        binding.rvData.setLayoutManager(new GridLayoutManager(GallaryScreen.this,3));
-                        binding.rvData.setAdapter(imgVidAdapter);
-                    }else{
-                        binding.tvNoData.setVisibility(View.VISIBLE);
+                    break;
+                case 2:
+                    if (file.listFiles().length > 0) {
+                        arrayList_ImgVids = new ArrayList<ImgVid>();
+                        for (int i = 0; i < file.listFiles().length; i++) {
+                            arrayList_ImgVids.add(new ImgVid(file.listFiles()[i], false));
+                        }
+                        if (arrayList_ImgVids.size() > 0) {
+                            imgVidAdapter = new ImgVidAdapter(GallaryScreen.this, arrayList_ImgVids);
+                            binding.rvData.setLayoutManager(new GridLayoutManager(GallaryScreen.this, 3));
+                            binding.rvData.setAdapter(imgVidAdapter);
+                        } else {
+                            binding.tvNoData.setVisibility(View.VISIBLE);
+                        }
                     }
-                }
-                break;
-            case 2:
-                if (file.listFiles().length > 0) {
-                    arrayList_ImgVids = new ArrayList<ImgVid>();
-                    for (int i = 0; i < file.listFiles().length; i++) {
-                        arrayList_ImgVids.add(new ImgVid(file.listFiles()[i],false));
+                    break;
+                case 3:
+                    if (file.listFiles().length > 0) {
+                        arrayList_ImgVids = new ArrayList<ImgVid>();
+                        for (int i = 0; i < file.listFiles().length; i++) {
+                            arrayList_ImgVids.add(new ImgVid(file.listFiles()[i], true));
+                        }
+                        if (arrayList_ImgVids.size() > 0) {
+                            imgVidAdapter = new ImgVidAdapter(GallaryScreen.this, arrayList_ImgVids);
+                            binding.rvData.setLayoutManager(new GridLayoutManager(GallaryScreen.this, 3));
+                            binding.rvData.setAdapter(imgVidAdapter);
+                        } else {
+                            binding.tvNoData.setVisibility(View.VISIBLE);
+                        }
                     }
-                    if(arrayList_ImgVids.size() > 0) {
-                        imgVidAdapter = new ImgVidAdapter(GallaryScreen.this,arrayList_ImgVids);
-                        binding.rvData.setLayoutManager(new GridLayoutManager(GallaryScreen.this,3));
-                        binding.rvData.setAdapter(imgVidAdapter);
-                    }else{
-                        binding.tvNoData.setVisibility(View.VISIBLE);
-                    }
-                }
-                break;
-            case 3:
-                if (file.listFiles().length > 0) {
-                    arrayList_ImgVids = new ArrayList<ImgVid>();
-                    for (int i = 0; i < file.listFiles().length; i++) {
-                        arrayList_ImgVids.add(new ImgVid(file.listFiles()[i],true));
-                    }
-                    if(arrayList_ImgVids.size() > 0) {
-                        imgVidAdapter = new ImgVidAdapter(GallaryScreen.this,arrayList_ImgVids);
-                        binding.rvData.setLayoutManager(new GridLayoutManager(GallaryScreen.this,3));
-                        binding.rvData.setAdapter(imgVidAdapter);
-                    }else{
-                        binding.tvNoData.setVisibility(View.VISIBLE);
-                    }
-                }
-                break;
-            default:
-                Toast.makeText(GallaryScreen.this,"t",Toast.LENGTH_SHORT).show();
+                    break;
+                default:
+                    Toast.makeText(GallaryScreen.this, "t", Toast.LENGTH_SHORT).show();
+            }
+        }catch (Exception e){
+            e.printStackTrace();
         }
     }
 

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/maleriya"
+        android:title="@string/malaria" />
+
+    <item
+        android:id="@+id/size_dest"
+        android:title="@string/size_distribution" />
+
+    <item
+        android:id="@+id/obaervation"
+        android:title="@string/obaervation" />
+
+    <item
+        android:id="@+id/microworld"
+        android:title="Microworld" />
+
+    <item
+        android:id="@+id/delete"
+        android:title="Delete" />
+</menu>

@@ -18,23 +18,53 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
+        <TextView
+            android:id="@+id/tvZoomDigit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/ab_zoom"
+            android:layout_marginStart="@dimen/_15sdp"
+            android:layout_marginBottom="@dimen/_5sdp"
+            android:text="000"
+            android:visibility="gone"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_18sdp" />
+
         <com.shahryar.airbar.AirBar
             android:id="@+id/ab_zoom"
             android:layout_width="50dp"
             android:layout_height="200dp"
-            app:icon="@drawable/ic_baseline_zoom_in_24"
             android:layout_centerVertical="true"
             android:layout_marginStart="@dimen/_10sdp"
+            android:visibility="gone"
             app:backgroundFillColor="@color/white"
+            app:icon="@drawable/ic_baseline_zoom_in_24"
+            app:max="255"
+            app:min="0"
             app:progressBarColor0="@color/purple_500"
-            app:progressBarColor1="@color/purple_700"
-            android:visibility="gone"/>
+            app:progressBarColor1="@color/purple_700" />
+
+        <TextView
+            android:id="@+id/tvBright"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/ab_bright"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="@dimen/_15sdp"
+            android:layout_marginEnd="@dimen/_15sdp"
+            android:layout_marginBottom="@dimen/_15sdp"
+            android:text="000"
+            android:visibility="gone"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_18sdp" />
 
 
         <com.shahryar.airbar.AirBar
             android:id="@+id/ab_bright"
             android:layout_width="50dp"
             android:layout_height="200dp"
+            app:min="0"
+            app:max="600"
             app:icon="@drawable/ic_baseline_brightness_5_24"
             android:layout_centerVertical="true"
             android:layout_marginEnd="@dimen/_10sdp"
@@ -42,7 +72,7 @@
             app:backgroundFillColor="@color/white"
             app:progressBarColor0="@color/purple_500"
             app:progressBarColor1="@color/purple_700"
-            android:visibility="gone"/>
+            android:visibility="gone" />
 
 
 

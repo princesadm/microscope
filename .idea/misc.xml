@@ -3,10 +3,16 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Aavishkar/Microscope/app/src/main/res/drawable/optionback.xml" value="0.2203125" />
+        <entry key="..\:/Aavishkar/Microscope/app/src/main/res/drawable/selected_back.xml" value="0.2203125" />
+        <entry key="..\:/Aavishkar/Microscope/app/src/main/res/drawable/selected_back_mode.xml" value="0.2203125" />
         <entry key="..\:/Aavishkar/Microscope/app/src/main/res/layout/activity_about_us_screen.xml" value="0.20416666666666666" />
+        <entry key="..\:/Aavishkar/Microscope/app/src/main/res/layout/activity_camara.xml" value="0.20416666666666666" />
         <entry key="..\:/Aavishkar/Microscope/app/src/main/res/layout/activity_contact_us_screen.xml" value="0.19010416666666666" />
         <entry key="..\:/Aavishkar/Microscope/app/src/main/res/layout/entity_img_vid.xml" value="0.25" />
+        <entry key="..\:/Aavishkar/Microscope/app/src/main/res/layout/entity_selected.xml" value="0.75" />
         <entry key="..\:/Aavishkar/Microscope/app/src/main/res/layout/fragment_setting.xml" value="0.20416666666666666" />
+        <entry key="..\:/Aavishkar/Microscope/app/src/main/res/menu/image_option.xml" value="0.20416666666666666" />
         <entry key="..\:/My Work/new/app/src/main/res/layout/activity_main.xml" value="0.36666666666666664" />
         <entry key="..\:/My Work/new/app/src/main/res/layout/entity_img_vid.xml" value="0.36666666666666664" />
         <entry key="..\:/My Work/new/app/src/main/res/layout/fragment_education.xml" value="0.36666666666666664" />

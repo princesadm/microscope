@@ -1,15 +1,15 @@
 package com.pt.cam.Activities;
 
+import static android.os.Build.VERSION.SDK_INT;
+
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
-import android.os.Handler;
 import android.os.SystemClock;
 import android.provider.Settings;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
@@ -43,10 +43,8 @@ import com.pt.cam.databinding.ActivityCamaraBinding;
 import com.shahryar.airbar.AirBar;
 
 import java.io.File;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
@@ -61,7 +59,7 @@ public class CamaraActivity extends AppCompatActivity {
 
     private static final String TAG = CamaraActivity.class.getSimpleName();
     private int REQUEST_CODE_PERMISSIONS = 101;
-    private final String[] REQUIRED_PERMISSIONS = new String[]{"android.permission.CAMERA","android.permission.WRITE_EXTERNAL_STORAGE","android.permission.READ_EXTERNAL_STORAGE"};
+    private final String[] REQUIRED_PERMISSIONS = new String[]{"android.permission.CAMERA", "android.permission.WRITE_EXTERNAL_STORAGE", "android.permission.READ_EXTERNAL_STORAGE"};
     private Uri imgUri = null;
     private String flashMode;
     private Camera camera;
@@ -69,7 +67,7 @@ public class CamaraActivity extends AppCompatActivity {
 
 
     @Override
-    protected void onCreate (Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityCamaraBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -77,71 +75,93 @@ public class CamaraActivity extends AppCompatActivity {
         Window window = getWindow();
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        window.setStatusBarColor(ContextCompat.getColor(CamaraActivity.this,R.color.purple_500));
+        window.setStatusBarColor(ContextCompat.getColor(CamaraActivity.this, R.color.purple_500));
         arrayList_modes = new ArrayList<>();
-        arrayList_modes.add(new Modes("Obaervation",true));
-        arrayList_modes.add(new Modes("Size Distribution",false));
-        arrayList_modes.add(new Modes("Microworld",false));
-        arrayList_modes.add(new Modes("Malaria",false));
+        arrayList_modes.add(new Modes("Obaervation", true));
+        arrayList_modes.add(new Modes("Size Distribution", false));
+        arrayList_modes.add(new Modes("Microworld", false));
+        arrayList_modes.add(new Modes("Malaria", false));
 
-        modeAdapter = new ModeAdapter(CamaraActivity.this,arrayList_modes);
-        binding.rvData.setLayoutManager(new LinearLayoutManager(getApplicationContext(),LinearLayoutManager.HORIZONTAL,false));
+        modeAdapter = new ModeAdapter(CamaraActivity.this, arrayList_modes);
+        binding.rvData.setLayoutManager(new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.HORIZONTAL, false));
         binding.rvData.setAdapter(modeAdapter);
 
 
+//        binding.abBright.setMin(0);
         if (allPermissionsGranted()) {
             startCamera(); //start camera if permission has been granted by user
         } else {
-            ActivityCompat.requestPermissions(this,REQUIRED_PERMISSIONS,REQUEST_CODE_PERMISSIONS);
-            Intent intent=new Intent(Intent.ACTION_SEND);
-            intent.setAction(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
-            startActivity(intent);
+            ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS);
+
+            if (SDK_INT >= Build.VERSION_CODES.Q) {
+                Intent intent = new Intent(Intent.ACTION_SEND);
+                intent.setAction(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
+                startActivity(intent);
+            }
         }
 
         binding.llZoomInOut.setOnClickListener(v -> {
             if (binding.abZoom.getVisibility() == View.GONE) {
                 binding.abZoom.setVisibility(View.VISIBLE);
+                binding.tvZoomDigit.setVisibility(View.VISIBLE);
             } else {
                 binding.abZoom.setVisibility(View.GONE);
+                binding.tvZoomDigit.setVisibility(View.GONE);
             }
         });
 
         binding.llBright.setOnClickListener(v -> {
             if (binding.abBright.getVisibility() == View.GONE) {
                 binding.abBright.setVisibility(View.VISIBLE);
+                binding.tvBright.setVisibility(View.VISIBLE);
             } else {
                 binding.abBright.setVisibility(View.GONE);
+                binding.tvBright.setVisibility(View.GONE);
             }
         });
 
-
         binding.abZoom.setOnProgressChangedListener(new AirBar.OnProgressChangedListener() {
             @Override
-            public void onProgressChanged (@NonNull AirBar airBar,double v,double v1) {
+            public void onProgressChanged(@NonNull AirBar airBar, double v, double v1) {
                 camera.getCameraControl().setLinearZoom((float) ((float) v / airBar.getMax()));
+                binding.tvZoomDigit.setText(((int) v)+"");
+
+                if (Integer.parseInt(String.valueOf((int)v)) >= 100 && Integer.parseInt(String.valueOf((int)v)) <=200) {
+                    Toast.makeText(CamaraActivity.this, "Zoom Led 1 -->" + (int)v, Toast.LENGTH_SHORT).show();
+                } else if (Integer.parseInt(String.valueOf((int)v)) > 200) {
+                    Toast.makeText(CamaraActivity.this, "zoom Led  2-->" + (int)v, Toast.LENGTH_SHORT).show();
+                }
             }
 
             @Override
-            public void afterProgressChanged (@NonNull AirBar airBar,double v,double v1) {
+            public void afterProgressChanged(@NonNull AirBar airBar, double v, double v1) {
                 binding.abZoom.setVisibility(View.GONE);
+                binding.tvZoomDigit.setVisibility(View.GONE);
             }
         });
 
         binding.abBright.setOnProgressChangedListener(new AirBar.OnProgressChangedListener() {
-            @SuppressLint("UnsafeOptInUsageError")
             @Override
-            public void onProgressChanged (@NonNull AirBar airBar,double v,double v1) {
-                camera.getCameraControl().setExposureCompensationIndex(Integer.parseInt(String.valueOf(airBar.getMax())));
+            public void onProgressChanged(@NonNull AirBar airBar, double v, double v1) {
+                binding.tvBright.setText(((int) v)+"");
+//                camera.getCameraControl().setExposureCompensationIndex(Integer.parseInt(String.valueOf(airBar.getMax())));
+
+                if (Integer.parseInt(String.valueOf((int)v)) >= 150 && Integer.parseInt(String.valueOf((int)v)) <= 300) {
+                    Toast.makeText(CamaraActivity.this, "bright Led 1 -->" + (int)v, Toast.LENGTH_SHORT).show();
+                } else if (Integer.parseInt(String.valueOf((int)v)) > 300) {
+                    Toast.makeText(CamaraActivity.this, "bright Led  2-->" + (int)v, Toast.LENGTH_SHORT).show();
+                }
             }
 
             @Override
-            public void afterProgressChanged (@NonNull AirBar airBar,double v,double v1) {
+            public void afterProgressChanged(@NonNull AirBar airBar, double v, double v1) {
                 binding.abBright.setVisibility(View.GONE);
+                binding.tvBright.setVisibility(View.GONE);
             }
         });
 
         binding.llGallery.setOnClickListener(v -> {
-            startActivity(new Intent(CamaraActivity.this,GallaryScreen.class));
+            startActivity(new Intent(CamaraActivity.this, GallaryScreen.class));
         });
 
         binding.ivVideo.setTag(R.drawable.ic_baseline_videocam_24);
@@ -181,25 +201,25 @@ public class CamaraActivity extends AppCompatActivity {
             int metaState = 0;
 
 // dispatch the event
-            MotionEvent event = MotionEvent.obtain(downTime,eventTime,action,x,y,metaState);
-            tapToFocus(camera,binding.viewFinder,event);
+            MotionEvent event = MotionEvent.obtain(downTime, eventTime, action, x, y, metaState);
+            tapToFocus(camera, binding.viewFinder, event);
         });
 
 
     }
 
-    public void changeFlashIcon (int icon) {
+    public void changeFlashIcon(int icon) {
         binding.ivFlash.setImageResource(icon);
         binding.ivFlash.setTag(icon);
     }
 
-    private void startCamera ( ) {
+    private void startCamera() {
 
         final ListenableFuture<ProcessCameraProvider> cameraProviderFuture = ProcessCameraProvider.getInstance(this);
 
         cameraProviderFuture.addListener(new Runnable() {
             @Override
-            public void run ( ) {
+            public void run() {
                 try {
 
                     ProcessCameraProvider cameraProvider = cameraProviderFuture.get();
@@ -210,10 +230,10 @@ public class CamaraActivity extends AppCompatActivity {
                     // This should never be reached.
                 }
             }
-        },ContextCompat.getMainExecutor(this));
+        }, ContextCompat.getMainExecutor(this));
     }
 
-    void bindPreview (@NonNull ProcessCameraProvider cameraProvider) {
+    void bindPreview(@NonNull ProcessCameraProvider cameraProvider) {
 
         Preview preview = new Preview.Builder()
                 .build();
@@ -241,31 +261,34 @@ public class CamaraActivity extends AppCompatActivity {
                 .build();
         preview.setSurfaceProvider(binding.viewFinder.getSurfaceProvider());
 
-        camera = cameraProvider.bindToLifecycle(this,cameraSelector,preview,imageAnalysis,imageCapture);
+        camera = cameraProvider.bindToLifecycle(this, cameraSelector, preview, imageAnalysis, imageCapture);
         camera.getCameraControl().setZoomRatio(0.1f);
 
 
         binding.llCapture.setOnClickListener(v -> {
-            SimpleDateFormat mDateFormat = new SimpleDateFormat("yyyyMMddHHmmss",Locale.US);
-            File file = new File(AppConstraint.DOWNLOAD_FOLDER_PATH,System.currentTimeMillis() + ".jpg");
-
+            File folder = new File(AppConstraint.IMG_FOLDER_PATH);
+            if (!folder.exists()) {
+                folder.mkdirs();
+            }
+            SimpleDateFormat mDateFormat = new SimpleDateFormat("yyyyMMddHHmmss", Locale.US);
+            File file = new File(AppConstraint.IMG_FOLDER_PATH, System.currentTimeMillis() + ".jpg");
             ImageCapture.OutputFileOptions outputFileOptions = new ImageCapture.OutputFileOptions.Builder(file).build();
-            imageCapture.takePicture(outputFileOptions,executor,new ImageCapture.OnImageSavedCallback() {
+            imageCapture.takePicture(outputFileOptions, executor, new ImageCapture.OnImageSavedCallback() {
                 @Override
-                public void onImageSaved (@NonNull ImageCapture.OutputFileResults outputFileResults) {
+                public void onImageSaved(@NonNull ImageCapture.OutputFileResults outputFileResults) {
 
                     runOnUiThread(new Runnable() {
                         @Override
-                        public void run ( ) {
+                        public void run() {
 
-                            Toast.makeText(CamaraActivity.this,"Image Saved successfully",Toast.LENGTH_SHORT).show();
+                            Toast.makeText(CamaraActivity.this, "Image Saved successfully", Toast.LENGTH_SHORT).show();
                         }
                     });
 
                 }
 
                 @Override
-                public void onError (@NonNull ImageCaptureException error) {
+                public void onError(@NonNull ImageCaptureException error) {
                     error.printStackTrace();
                 }
             });
@@ -274,18 +297,18 @@ public class CamaraActivity extends AppCompatActivity {
 
     }
 
-    public static void tapToFocus (Camera camera,PreviewView previewView,MotionEvent motionEvent) {
+    public static void tapToFocus(Camera camera, PreviewView previewView, MotionEvent motionEvent) {
         if (camera != null && previewView != null && motionEvent.getAction() == 1) {
             float x = motionEvent.getX();
             float y = motionEvent.getY();
-            camera.getCameraControl().startFocusAndMetering(new FocusMeteringAction.Builder(new SurfaceOrientedMeteringPointFactory((float) previewView.getWidth(),(float) previewView.getHeight()).createPoint(x,y),FocusMeteringAction.FLAG_AF).setAutoCancelDuration(2,TimeUnit.SECONDS).build());
+            camera.getCameraControl().startFocusAndMetering(new FocusMeteringAction.Builder(new SurfaceOrientedMeteringPointFactory((float) previewView.getWidth(), (float) previewView.getHeight()).createPoint(x, y), FocusMeteringAction.FLAG_AF).setAutoCancelDuration(2, TimeUnit.SECONDS).build());
 //            AnimUtils.moveImgFocus(imageView, x, y);
 //            AnimUtils.animateImgFocus(imageView);
         }
     }
 
 
-    public String getBatchDirectoryName ( ) {
+    public String getBatchDirectoryName() {
 
         String app_folder_path = "";
         app_folder_path = AppConstraint.IMG_FOLDER_PATH;
@@ -330,52 +353,52 @@ public class CamaraActivity extends AppCompatActivity {
     }*/
 
     @Override
-    public void onRequestPermissionsResult (int requestCode,@NonNull String[] permissions,@NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode,permissions,grantResults);
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == REQUEST_CODE_PERMISSIONS) {
             if (allPermissionsGranted()) {
                 startCamera();
             } else {
-                Toast.makeText(this,"Permissions not granted by the user.",Toast.LENGTH_SHORT).show();
-                ActivityCompat.requestPermissions(this,REQUIRED_PERMISSIONS,REQUEST_CODE_PERMISSIONS);
+                Toast.makeText(this, "Permissions not granted by the user.", Toast.LENGTH_SHORT).show();
+                ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS);
             }
         }
     }
 
     @Override
-    protected void onActivityResult (int requestCode,int resultCode,@Nullable Intent data) {
-        super.onActivityResult(requestCode,resultCode,data);
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
-            Toast.makeText(CamaraActivity.this,"click",Toast.LENGTH_SHORT).show();
+            Toast.makeText(CamaraActivity.this, "click", Toast.LENGTH_SHORT).show();
         }
     }
 
-    private boolean allPermissionsGranted ( ) {
+    private boolean allPermissionsGranted() {
 
         for (String permission : REQUIRED_PERMISSIONS) {
-            if (ContextCompat.checkSelfPermission(this,permission) != PackageManager.PERMISSION_GRANTED) {
+            if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
                 return false;
             }
         }
         return true;
     }
 
-    public void setZoomInOutAndTapToFocuse ( ) {
+    public void setZoomInOutAndTapToFocuse() {
         ScaleGestureDetector.SimpleOnScaleGestureListener listener = new ScaleGestureDetector.SimpleOnScaleGestureListener() {
             @Override
-            public boolean onScale (ScaleGestureDetector detector) {
+            public boolean onScale(ScaleGestureDetector detector) {
 
                 return true;
 
             }
 
             @Override
-            public boolean onScaleBegin (ScaleGestureDetector detector) {
+            public boolean onScaleBegin(ScaleGestureDetector detector) {
                 return super.onScaleBegin(detector);
             }
 
             @Override
-            public void onScaleEnd (ScaleGestureDetector detector) {
+            public void onScaleEnd(ScaleGestureDetector detector) {
                 super.onScaleEnd(detector);
             }
         };
